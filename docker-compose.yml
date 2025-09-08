@@ -1,35 +1,26 @@
-version: '3.8'
-
+version: "3.9"
 services:
   backend:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
+    build: ./backend
     ports:
       - "5000:5000"
     environment:
-      DB_HOST: db
-      DB_USER: postgres
-      DB_PASSWORD: postgres
-      DB_NAME: testdb
-      DB_PORT: 5432
+      - DATABASE_URL=postgres://example:example@db:5432/example
     depends_on:
       - db
 
   frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
+    build: ./frontend
     ports:
       - "3000:3000"
     depends_on:
       - backend
 
   db:
-    image: postgres:latest
+    image: postgres:13
     volumes:
       - ./db-data:/var/lib/postgresql/data
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: testdb
+      POSTGRES_DB: example
+      POSTGRES_USER: example
+      POSTGRES_PASSWORD: example
