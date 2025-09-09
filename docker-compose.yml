@@ -1,11 +1,27 @@
 version: "3.9"
+
 services:
+  db:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
   backend:
     build: ./backend
+    environment:
+      DB_HOST: db
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_NAME: ${DB_NAME}
+      DB_PORT: 5432
     ports:
       - "5000:5000"
-    environment:
-      - DATABASE_URL=postgres://example:example@db:5432/example
     depends_on:
       - db
 
@@ -16,11 +32,5 @@ services:
     depends_on:
       - backend
 
-  db:
-    image: postgres:13
-    volumes:
-      - ./db-data:/var/lib/postgresql/data
-    environment:
-      POSTGRES_DB: example
-      POSTGRES_USER: example
-      POSTGRES_PASSWORD: example
+volumes:
+  db-data:

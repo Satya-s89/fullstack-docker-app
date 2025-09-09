@@ -3,6 +3,11 @@ const { Client } = require('pg');
 const app = express();
 const port = 5000;
 
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  next();
+});
+
 const dbClient = new Client({
   host: process.env.DB_HOST || 'localhost',
   user: process.env.DB_USER || 'postgres',
@@ -12,7 +17,10 @@ const dbClient = new Client({
 });
 
 dbClient.connect()
-  .then(() => console.log('Connected to Postgres'))
+  .then(() => {
+    console.log('Connected to Postgres');
+    return dbClient.query('SELECT 1');
+  })
   .catch((err) => console.error('Failed to connect to Postgres', err));
 
 app.get('/api', async (req, res) => {
